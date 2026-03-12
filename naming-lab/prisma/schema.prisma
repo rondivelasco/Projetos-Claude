@@ -1,0 +1,160 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Project {
+  id           String   @id @default(cuid())
+  name         String
+  type         String   // brand | product | saas | character | place | title | product-line
+  context      String?
+  targetAudience String?
+  market       String?
+  language     String   @default("pt-BR")
+  category     String?
+  personality  String?
+  references   String?
+  restrictions String?
+  tags         String?  // JSON string[]
+  isFavorite   Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  diagnoses  Diagnosis[]
+  rounds     Round[]
+  candidates Candidate[]
+  decision   Decision?
+}
+
+model Diagnosis {
+  id          String   @id @default(cuid())
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  states      String   // JSON: string[] of "N1"|"N2"|"N3"|"N4"|"N5"
+  symptoms    String   // JSON: string[]
+  causes      String   // JSON: string[]
+  impact      String
+  direction   String?
+  createdAt   DateTime @default(now())
+}
+
+model Round {
+  id        String   @id @default(cuid())
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  number    Int
+  label     String?
+  filters   String?  // JSON
+  snapshot  String?  // JSON full state snapshot
+  createdAt DateTime @default(now())
+
+  candidates Candidate[]
+}
+
+model Candidate {
+  id            String   @id @default(cuid())
+  projectId     String
+  project       Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  roundId       String?
+  round         Round?   @relation(fields: [roundId], references: [id])
+  name          String
+  notes         String?
+  isShortlisted Boolean  @default(false)
+  isDiscarded   Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  soundLayer    SoundLayer?
+  meaningLayer  MeaningLayer?
+  culturalLayer CulturalLayer?
+  functionalLayer FunctionalLayer?
+  score         Score?
+}
+
+model SoundLayer {
+  id             String    @id @default(cuid())
+  candidateId    String    @unique
+  candidate      Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  profile        String    // JSON: {depth,light,impact,flow,tech} 0-1 each
+  dominantTone   String    // premium|tech|human|clinical|bold|mixed
+  rhythm         String    // monosyllabic|balanced|flowing|complex
+  syllableCount  Int
+  hasRepetition  Boolean
+  repetitionNote String?
+  clarityScore   Int       // 0-10
+  conflicts      String?   // JSON string[]
+  notes          String    // JSON string[]
+}
+
+model MeaningLayer {
+  id              String    @id @default(cuid())
+  candidateId     String    @unique
+  candidate       Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  type            String    // descriptive|metaphorical|abstract|portmanteau
+  clarity         Int       // 0-10
+  suggestion      String
+  symbolicDensity Int       // 0-10
+  conflicts       String?   // JSON string[]
+  notes           String    // JSON string[]
+}
+
+model CulturalLayer {
+  id             String    @id @default(cuid())
+  candidateId    String    @unique
+  candidate      Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  associations   String    // JSON string[]
+  ambiguityLevel String    // low|medium|high
+  culturalRisk   String    // low|medium|high
+  conflicts      String?   // JSON string[]
+  notes          String    // JSON string[]
+}
+
+model FunctionalLayer {
+  id            String    @id @default(cuid())
+  candidateId   String    @unique
+  candidate     Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  pronunciation Int       // 0-10
+  writability   Int       // 0-10
+  memorability  Int       // 0-10
+  phoneTest     Boolean
+  typoRisk      Int       // 0-10 (0=low risk, 10=high risk)
+  readability   Int       // 0-10
+  conflicts     String?   // JSON string[]
+  notes         String    // JSON string[]
+}
+
+model Score {
+  id              String    @id @default(cuid())
+  candidateId     String    @unique
+  candidate       Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  soundFit        Float
+  semanticClarity Float
+  culturalFit     Float
+  functionality   Float
+  memorability    Float
+  differentiation Float
+  brandPotential  Float
+  total           Float
+  justification   String
+  strengths       String    // JSON string[]
+  weaknesses      String    // JSON string[]
+  risks           String    // JSON string[]
+  updatedAt       DateTime  @updatedAt
+}
+
+model Decision {
+  id            String    @id @default(cuid())
+  projectId     String    @unique
+  project       Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  chosenName    String
+  candidateId   String?
+  justification String
+  shortlist     String    // JSON string[] of names
+  discarded     String    // JSON: {name, reason}[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}

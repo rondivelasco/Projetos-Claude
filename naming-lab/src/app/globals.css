@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg: 248 250 252;
+    --surface: 255 255 255;
+    --border: 226 232 240;
+    --text: 15 23 42;
+    --muted: 100 116 139;
+    --accent: 124 58 237;
+  }
+
+  .dark {
+    --bg: 9 9 11;
+    --surface: 18 18 22;
+    --border: 39 39 50;
+    --text: 248 250 252;
+    --muted: 113 113 122;
+    --accent: 139 92 246;
+  }
+
+  * { @apply border-slate-200 dark:border-zinc-800; }
+  body {
+    @apply bg-slate-50 dark:bg-zinc-950 text-slate-900 dark:text-slate-100;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer components {
+  .surface { @apply bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800; }
+  .label { @apply text-xs font-medium text-slate-500 dark:text-zinc-400 uppercase tracking-wide; }
+  .input {
+    @apply w-full rounded-lg border border-slate-200 dark:border-zinc-700
+           bg-white dark:bg-zinc-900
+           px-3 py-2 text-sm text-slate-900 dark:text-slate-100
+           placeholder:text-slate-400 dark:placeholder:text-zinc-500
+           focus:outline-none focus:ring-2 focus:ring-brand-500 dark:focus:ring-brand-400
+           transition;
+  }
+  .btn-primary {
+    @apply inline-flex items-center gap-2 rounded-lg bg-brand-600 hover:bg-brand-700
+           px-4 py-2 text-sm font-medium text-white transition
+           focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2
+           disabled:opacity-50 disabled:pointer-events-none;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 rounded-lg
+           px-3 py-1.5 text-sm font-medium
+           text-slate-600 dark:text-zinc-300
+           hover:bg-slate-100 dark:hover:bg-zinc-800 transition;
+  }
+  .score-bar {
+    @apply h-1.5 rounded-full bg-slate-200 dark:bg-zinc-700 overflow-hidden;
+  }
+  .score-fill {
+    @apply h-full rounded-full transition-all;
+  }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { @apply bg-transparent; }
+::-webkit-scrollbar-thumb { @apply bg-slate-300 dark:bg-zinc-600 rounded-full; }
