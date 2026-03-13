@@ -5,12 +5,12 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 const PROJECT_TYPES = [
-  { value: "brand", label: "Marca" },
-  { value: "product", label: "Produto" },
-  { value: "saas", label: "SaaS / App" },
-  { value: "character", label: "Personagem" },
-  { value: "place", label: "Lugar / Espaço" },
-  { value: "title", label: "Título / Editorial" },
+  { value: "brand",        label: "Marca" },
+  { value: "product",      label: "Produto" },
+  { value: "saas",         label: "SaaS / App" },
+  { value: "character",    label: "Personagem" },
+  { value: "place",        label: "Lugar / Espaço" },
+  { value: "title",        label: "Título / Editorial" },
   { value: "product-line", label: "Linha de Produtos" },
 ];
 
@@ -38,19 +38,16 @@ export default function NewProject() {
 
   const set = (key: string, value: string) => setForm((f) => ({ ...f, [key]: value }));
 
-  const toggleTag = (tag: string) => {
+  const toggleTag = (tag: string) =>
     setSelectedTags((prev) =>
       prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
     );
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name.trim()) return;
     setLoading(true);
-
     const personalityFull = [form.personality, ...selectedTags].filter(Boolean).join(", ");
-
     const res = await fetch("/api/projects", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -61,60 +58,71 @@ export default function NewProject() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-zinc-950">
-      <header className="border-b border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+    <div className="min-h-screen bg-[#F4F0E8] dark:bg-[#12110E]">
+      {/* Header */}
+      <header className="border-b border-[#E0D8CA] dark:border-[#2E2A24] bg-white dark:bg-[#1C1A16]">
         <div className="max-w-3xl mx-auto px-6 py-4 flex items-center gap-4">
-          <Link href="/" className="btn-ghost text-sm">← Voltar</Link>
-          <h1 className="font-semibold text-slate-900 dark:text-slate-100">Novo Projeto de Naming</h1>
+          <Link href="/" className="btn-ghost text-xs text-muted py-1">← Voltar</Link>
+          <div className="flex items-center gap-3">
+            <div className="w-5 h-5 rounded bg-[#2A5231] flex items-center justify-center shrink-0">
+              <span className="text-[7px] text-[#F4F0E8] font-bold">N</span>
+            </div>
+            <h1 className="font-bold text-[#383834] dark:text-[#F4F0E8] text-sm">Novo Projeto de Naming</h1>
+          </div>
         </div>
       </header>
 
       <main className="max-w-3xl mx-auto px-6 py-8">
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-5">
+
           {/* Identidade */}
-          <section className="surface rounded-xl p-6 space-y-4">
-            <h2 className="font-semibold text-slate-800 dark:text-slate-200">Identidade do projeto</h2>
+          <section className="surface rounded-xl p-6 space-y-5">
+            <div>
+              <p className="section-label mb-1">01 — Identidade</p>
+              <h2 className="font-bold text-[#383834] dark:text-[#F4F0E8]">Identidade do projeto</h2>
+            </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="col-span-2">
-                <label className="label block mb-1">Nome do projeto *</label>
-                <input
-                  required
-                  value={form.name}
-                  onChange={(e) => set("name", e.target.value)}
-                  placeholder="Ex: Renaming da marca principal"
-                  className="input"
-                />
-              </div>
+            <div>
+              <label className="label block mb-1.5">Nome do projeto *</label>
+              <input
+                required
+                value={form.name}
+                onChange={(e) => set("name", e.target.value)}
+                placeholder="Ex: Renaming da marca principal"
+                className="input"
+              />
+            </div>
 
-              <div className="col-span-2">
-                <label className="label block mb-2">Tipo de naming *</label>
-                <div className="grid grid-cols-4 gap-2">
-                  {PROJECT_TYPES.map((t) => (
-                    <button
-                      key={t.value}
-                      type="button"
-                      onClick={() => set("type", t.value)}
-                      className={`px-3 py-2 rounded-lg text-sm font-medium border transition ${
-                        form.type === t.value
-                          ? "border-brand-500 bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-300"
-                          : "border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-400 hover:border-slate-300"
-                      }`}
-                    >
-                      {t.label}
-                    </button>
-                  ))}
-                </div>
+            <div>
+              <label className="label block mb-2">Tipo de naming *</label>
+              <div className="grid grid-cols-4 gap-2">
+                {PROJECT_TYPES.map((t) => (
+                  <button
+                    key={t.value}
+                    type="button"
+                    onClick={() => set("type", t.value)}
+                    className={`px-3 py-2 rounded-lg text-xs font-semibold border transition ${
+                      form.type === t.value
+                        ? "border-[#2A5231] bg-forest-50 dark:bg-forest-950 text-forest-700 dark:text-forest-300"
+                        : "border-[#E0D8CA] dark:border-[#3A3630] text-muted hover:border-[#BEA882]"
+                    }`}
+                  >
+                    {t.label}
+                  </button>
+                ))}
               </div>
             </div>
           </section>
 
           {/* Contexto */}
-          <section className="surface rounded-xl p-6 space-y-4">
-            <h2 className="font-semibold text-slate-800 dark:text-slate-200">Contexto estratégico</h2>
+          <section className="surface rounded-xl p-6 space-y-5">
+            <div>
+              <p className="section-label mb-1">02 — Contexto</p>
+              <h2 className="font-bold text-[#383834] dark:text-[#F4F0E8]">Contexto estratégico</h2>
+            </div>
 
             <div>
-              <label className="label block mb-1">Contexto livre</label>
+              <label className="label block mb-1.5">Contexto livre</label>
               <textarea
                 value={form.context}
                 onChange={(e) => set("context", e.target.value)}
@@ -125,19 +133,34 @@ export default function NewProject() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="label block mb-1">Público-alvo</label>
-                <input value={form.targetAudience} onChange={(e) => set("targetAudience", e.target.value)} placeholder="Ex: Profissionais 25-40 anos" className="input" />
+                <label className="label block mb-1.5">Público-alvo</label>
+                <input
+                  value={form.targetAudience}
+                  onChange={(e) => set("targetAudience", e.target.value)}
+                  placeholder="Ex: Profissionais 25-40 anos"
+                  className="input"
+                />
               </div>
               <div>
-                <label className="label block mb-1">Categoria</label>
-                <input value={form.category} onChange={(e) => set("category", e.target.value)} placeholder="Ex: Fintech, Saúde, B2B SaaS" className="input" />
+                <label className="label block mb-1.5">Categoria</label>
+                <input
+                  value={form.category}
+                  onChange={(e) => set("category", e.target.value)}
+                  placeholder="Ex: Fintech, Saúde, B2B SaaS"
+                  className="input"
+                />
               </div>
               <div>
-                <label className="label block mb-1">Mercado / Região</label>
-                <input value={form.market} onChange={(e) => set("market", e.target.value)} placeholder="Ex: Brasil, América Latina" className="input" />
+                <label className="label block mb-1.5">Mercado / Região</label>
+                <input
+                  value={form.market}
+                  onChange={(e) => set("market", e.target.value)}
+                  placeholder="Ex: Brasil, América Latina"
+                  className="input"
+                />
               </div>
               <div>
-                <label className="label block mb-1">Idioma principal</label>
+                <label className="label block mb-1.5">Idioma principal</label>
                 <select value={form.language} onChange={(e) => set("language", e.target.value)} className="input">
                   <option value="pt-BR">Português (Brasil)</option>
                   <option value="en">Inglês</option>
@@ -149,8 +172,11 @@ export default function NewProject() {
           </section>
 
           {/* Personalidade */}
-          <section className="surface rounded-xl p-6 space-y-4">
-            <h2 className="font-semibold text-slate-800 dark:text-slate-200">Personalidade da marca</h2>
+          <section className="surface rounded-xl p-6 space-y-5">
+            <div>
+              <p className="section-label mb-1">03 — Personalidade</p>
+              <h2 className="font-bold text-[#383834] dark:text-[#F4F0E8]">Personalidade da marca</h2>
+            </div>
 
             <div>
               <label className="label block mb-2">Atributos de personalidade</label>
@@ -162,8 +188,8 @@ export default function NewProject() {
                     onClick={() => toggleTag(tag)}
                     className={`px-3 py-1 rounded-full text-xs font-medium border transition ${
                       selectedTags.includes(tag)
-                        ? "border-brand-500 bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-300"
-                        : "border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-400 hover:border-slate-300"
+                        ? "border-[#2A5231] bg-forest-50 dark:bg-forest-950 text-forest-700 dark:text-forest-300"
+                        : "border-[#E0D8CA] dark:border-[#3A3630] text-muted hover:border-[#BEA882]"
                     }`}
                   >
                     {tag}
@@ -179,19 +205,33 @@ export default function NewProject() {
             </div>
 
             <div>
-              <label className="label block mb-1">Referências e concorrentes</label>
-              <input value={form.references} onChange={(e) => set("references", e.target.value)} placeholder="Ex: Notion, Linear, Stripe (estilo visual / naming)" className="input" />
+              <label className="label block mb-1.5">Referências e concorrentes</label>
+              <input
+                value={form.references}
+                onChange={(e) => set("references", e.target.value)}
+                placeholder="Ex: Notion, Linear, Stripe (estilo visual / naming)"
+                className="input"
+              />
             </div>
 
             <div>
-              <label className="label block mb-1">Restrições</label>
-              <input value={form.restrictions} onChange={(e) => set("restrictions", e.target.value)} placeholder="Ex: Não pode usar prefixo 'e-', evitar nomes religiosos" className="input" />
+              <label className="label block mb-1.5">Restrições</label>
+              <input
+                value={form.restrictions}
+                onChange={(e) => set("restrictions", e.target.value)}
+                placeholder="Ex: Não pode usar prefixo 'e-', evitar nomes religiosos"
+                className="input"
+              />
             </div>
           </section>
 
-          <div className="flex items-center justify-between">
-            <Link href="/" className="btn-ghost">Cancelar</Link>
-            <button type="submit" disabled={loading || !form.name.trim()} className="btn-primary px-6">
+          <div className="flex items-center justify-between pt-1">
+            <Link href="/" className="btn-ghost text-muted">Cancelar</Link>
+            <button
+              type="submit"
+              disabled={loading || !form.name.trim()}
+              className="btn-primary px-6"
+            >
               {loading ? "Criando..." : "Criar workspace →"}
             </button>
           </div>

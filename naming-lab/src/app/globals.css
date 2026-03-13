@@ -2,64 +2,217 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─── Design tokens ─────────────────────────────────────────────────────────── */
 @layer base {
   :root {
-    --bg: 248 250 252;
-    --surface: 255 255 255;
-    --border: 226 232 240;
-    --text: 15 23 42;
-    --muted: 100 116 139;
-    --accent: 124 58 237;
+    /* Palette */
+    --linen:   244 240 232;   /* #F4F0E8 — background warm white */
+    --white:   255 255 255;   /* #FFFFFF — surface/card */
+    --oak:     190 168 130;   /* #BEA882 */
+    --sand:    206 191 166;   /* #CEBFA6 */
+    --forest:  42  82  49;    /* #2A5231 — primary */
+    --charcoal: 56 56 52;     /* #383834 — text */
+    --muted:   138 132 120;   /* #8A8478 */
+    --border:  224 216 202;   /* #E0D8CA — warm border */
   }
 
   .dark {
-    --bg: 9 9 11;
-    --surface: 18 18 22;
-    --border: 39 39 50;
-    --text: 248 250 252;
-    --muted: 113 113 122;
-    --accent: 139 92 246;
+    --linen:   18  17  14;    /* #12110E — warm almost-black */
+    --white:   28  26  22;    /* #1C1A16 — dark surface */
+    --oak:     120 104  80;
+    --sand:    80  72  60;
+    --forest:  42 114  52;    /* slightly lighter green in dark */
+    --charcoal: 244 240 232;  /* inverted — linen becomes text */
+    --muted:   130 124 112;
+    --border:  46  42  36;    /* #2E2A24 */
   }
 
-  * { @apply border-slate-200 dark:border-zinc-800; }
+  /* Base resets */
+  * { @apply border-[#E0D8CA] dark:border-[#2E2A24]; }
+
   body {
-    @apply bg-slate-50 dark:bg-zinc-950 text-slate-900 dark:text-slate-100;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    background-color: #F4F0E8;
+    color: #383834;
+    font-family: var(--font-jakarta), system-ui, sans-serif;
+    font-feature-settings: "rlig" 1, "calt" 1, "ss01" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
+
+  .dark body {
+    background-color: #12110E;
+    color: #F4F0E8;
+  }
+
+  /* Editorial heading scale */
+  h1 { @apply text-2xl font-bold tracking-tight text-charcoal-700 dark:text-linen-100; }
+  h2 { @apply text-lg font-semibold tracking-tight text-charcoal-700 dark:text-linen-100; }
+  h3 { @apply text-base font-semibold text-charcoal-700 dark:text-linen-100; }
 }
 
+/* ─── Component classes ──────────────────────────────────────────────────────── */
 @layer components {
-  .surface { @apply bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800; }
-  .label { @apply text-xs font-medium text-slate-500 dark:text-zinc-400 uppercase tracking-wide; }
+
+  /* Cards / surfaces */
+  .surface {
+    background-color: #FFFFFF;
+    border: 1px solid #E0D8CA;
+  }
+  .dark .surface {
+    background-color: #1C1A16;
+    border-color: #2E2A24;
+  }
+
+  /* Label — editorial uppercase */
+  .label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #8A8478;
+  }
+  .dark .label { color: #9A9488; }
+
+  /* Input */
   .input {
-    @apply w-full rounded-lg border border-slate-200 dark:border-zinc-700
-           bg-white dark:bg-zinc-900
-           px-3 py-2 text-sm text-slate-900 dark:text-slate-100
-           placeholder:text-slate-400 dark:placeholder:text-zinc-500
-           focus:outline-none focus:ring-2 focus:ring-brand-500 dark:focus:ring-brand-400
-           transition;
+    @apply w-full rounded-md
+           px-3 py-2 text-sm
+           transition duration-150;
+    background-color: #FFFFFF;
+    border: 1px solid #D8CFBC;
+    color: #383834;
   }
+  .input::placeholder { color: #B8B0A0; }
+  .input:focus {
+    outline: none;
+    border-color: #2A5231;
+    box-shadow: 0 0 0 3px rgba(42,82,49,0.12);
+  }
+  .dark .input {
+    background-color: #1C1A16;
+    border-color: #3A3630;
+    color: #F4F0E8;
+  }
+  .dark .input::placeholder { color: #6A6660; }
+  .dark .input:focus {
+    border-color: #3A8F47;
+    box-shadow: 0 0 0 3px rgba(58,143,71,0.15);
+  }
+
+  /* Primary button — Forest Green */
   .btn-primary {
-    @apply inline-flex items-center gap-2 rounded-lg bg-brand-600 hover:bg-brand-700
-           px-4 py-2 text-sm font-medium text-white transition
-           focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2
-           disabled:opacity-50 disabled:pointer-events-none;
+    @apply inline-flex items-center gap-2 rounded-md
+           px-4 py-2 text-sm font-semibold
+           transition duration-150 cursor-pointer;
+    background-color: #2A5231;
+    color: #F4F0E8;
+    letter-spacing: 0.01em;
   }
+  .btn-primary:hover  { background-color: #1F3E26; }
+  .btn-primary:focus  {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(42,82,49,0.25);
+  }
+  .btn-primary:disabled {
+    opacity: 0.45;
+    pointer-events: none;
+  }
+
+  /* Ghost button — subtle */
   .btn-ghost {
-    @apply inline-flex items-center gap-2 rounded-lg
+    @apply inline-flex items-center gap-2 rounded-md
            px-3 py-1.5 text-sm font-medium
-           text-slate-600 dark:text-zinc-300
-           hover:bg-slate-100 dark:hover:bg-zinc-800 transition;
+           transition duration-150;
+    color: #6C6860;
   }
+  .btn-ghost:hover {
+    background-color: #EDE8DF;
+    color: #383834;
+  }
+  .dark .btn-ghost { color: #9A9488; }
+  .dark .btn-ghost:hover { background-color: #272420; color: #F4F0E8; }
+
+  /* Outline button */
+  .btn-outline {
+    @apply inline-flex items-center gap-2 rounded-md
+           px-4 py-2 text-sm font-semibold border
+           transition duration-150;
+    border-color: #2A5231;
+    color: #2A5231;
+  }
+  .btn-outline:hover {
+    background-color: #2A5231;
+    color: #F4F0E8;
+  }
+
+  /* Score bars */
   .score-bar {
-    @apply h-1.5 rounded-full bg-slate-200 dark:bg-zinc-700 overflow-hidden;
+    @apply h-1.5 rounded-full overflow-hidden;
+    background-color: #E0D8CA;
   }
-  .score-fill {
-    @apply h-full rounded-full transition-all;
+  .dark .score-bar { background-color: #3A3630; }
+  .score-fill { @apply h-full rounded-full transition-all; }
+
+  /* Section header — editorial numbered style */
+  .section-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #BEA882;
   }
 }
 
-/* Scrollbar */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { @apply bg-transparent; }
-::-webkit-scrollbar-thumb { @apply bg-slate-300 dark:bg-zinc-600 rounded-full; }
+/* ─── Utility overrides ──────────────────────────────────────────────────────── */
+@layer utilities {
+  /* Backgrounds using palette */
+  .bg-linen  { background-color: #F4F0E8; }
+  .bg-surface { background-color: #FFFFFF; }
+  .text-charcoal { color: #383834; }
+  .text-muted { color: #8A8478; }
+  .border-warm { border-color: #E0D8CA; }
+
+  /* Page-level backgrounds — override slate-50 usage */
+  .bg-slate-50 { background-color: #F4F0E8 !important; }
+  .dark .bg-slate-50 { background-color: #12110E !important; }
+  .bg-white { background-color: #FFFFFF !important; }
+  .dark .bg-white { background-color: #1C1A16 !important; }
+
+  /* Text overrides */
+  .text-slate-900 { color: #383834 !important; }
+  .dark .text-slate-900 { color: #F4F0E8 !important; }
+  .text-slate-800 { color: #3D3C38 !important; }
+  .text-slate-700 { color: #504E48 !important; }
+  .text-slate-600 { color: #6C6860 !important; }
+  .text-slate-500 { color: #8A8478 !important; }
+  .text-slate-400 { color: #A8A49B !important; }
+
+  /* Border overrides */
+  .border-slate-200  { border-color: #E0D8CA !important; }
+  .border-slate-100  { border-color: #EDE8DF !important; }
+
+  /* Header/surface bg overrides */
+  .bg-slate-100 { background-color: #EDE8DF !important; }
+
+  /* Dark mode zinc overrides → warm dark palette */
+  .dark .bg-zinc-900  { background-color: #1C1A16 !important; }
+  .dark .bg-zinc-800  { background-color: #272420 !important; }
+  .dark .bg-zinc-950  { background-color: #12110E !important; }
+  .dark .border-zinc-800 { border-color: #2E2A24 !important; }
+  .dark .border-zinc-700 { border-color: #3A3630 !important; }
+  .dark .text-zinc-400   { color: #9A9488 !important; }
+  .dark .text-zinc-300   { color: #B8B0A0 !important; }
+  .dark .text-zinc-500   { color: #7A7468 !important; }
+}
+
+/* ─── Scrollbar ──────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background-color: #D0C8B6; border-radius: 9999px; }
+.dark ::-webkit-scrollbar-thumb { background-color: #3A3630; }
+
+/* ─── Selection ──────────────────────────────────────────────────────────────── */
+::selection {
+  background-color: rgba(42, 82, 49, 0.18);
+  color: #1F3E26;
+}
